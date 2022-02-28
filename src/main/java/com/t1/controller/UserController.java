@@ -48,8 +48,8 @@ import com.t1.responsedto.UserResponse;
 import com.t1.service.UserService;
 
 
-@CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
+@CrossOrigin(origins = "*", methods = {RequestMethod.GET, RequestMethod.POST, RequestMethod.PUT})
 @RequestMapping("/api/user")
 public class UserController {
 	

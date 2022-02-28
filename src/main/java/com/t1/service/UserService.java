@@ -42,7 +42,7 @@ public class UserService {
 				user.getUsername() == null || user.getUsername().isEmpty() || 
 				user.getPassword() == null || user.getPassword().isEmpty()) {
 			throw new NullPointerException();
-		}	
+		}
 		
 		user.setPkmTeam(new ArrayList<PokemonEntity>());
 
