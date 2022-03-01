@@ -3,6 +3,8 @@ package com.t1.config;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.dao.InvalidDataAccessApiUsageException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -14,6 +16,7 @@ import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
 import com.t1.exception.NotFoudExeception;
+import com.t1.exception.NullBlankException;
 import com.t1.responsedto.ResponseDTO;
 
 @ControllerAdvice
@@ -38,9 +41,10 @@ public class ExceptionHandlere  extends ResponseEntityExceptionHandler{
 		return new ResponseEntity<ResponseDTO<String>>(response, HttpStatus.NOT_FOUND);
 	}
 	
-	@ExceptionHandler(RuntimeException.class)
-	public ResponseEntity<ErrorDetails> psqlExc(RuntimeException e, WebRequest req){
-		ErrorDetails error = new ErrorDetails("Usuario o Pokemon ya existente", 900 );
+	
+	@ExceptionHandler(NullBlankException.class)
+	public ResponseEntity<ErrorDetails> psqlExc(NullBlankException e, WebRequest req){
+		ErrorDetails error = new ErrorDetails(e.getMessage(), 900 );
 		return new ResponseEntity<>(error, HttpStatus.INTERNAL_SERVER_ERROR);
 	}
 	
@@ -49,6 +53,19 @@ public class ExceptionHandlere  extends ResponseEntityExceptionHandler{
 		ErrorDetails error = new ErrorDetails("Falta un campo por llenar", 1000);
 		return new ResponseEntity<>(error, HttpStatus.INTERNAL_SERVER_ERROR);
 	}
+	
+	@ExceptionHandler(DataIntegrityViolationException.class)
+	public ResponseEntity<ErrorDetails> nullPoint(DataIntegrityViolationException e, WebRequest req){
+		ErrorDetails error = new ErrorDetails("Pokemon already exist!", 1101);
+		return new ResponseEntity<>(error, HttpStatus.INTERNAL_SERVER_ERROR);
+	}
+
+	@ExceptionHandler(InvalidDataAccessApiUsageException.class)
+	public ResponseEntity<ErrorDetails> nullPoint(InvalidDataAccessApiUsageException e, WebRequest req){
+		ErrorDetails error = new ErrorDetails("Pokemon already exist!", 1202);
+		return new ResponseEntity<>(error, HttpStatus.INTERNAL_SERVER_ERROR);
+	}
+	
 	
 
 }

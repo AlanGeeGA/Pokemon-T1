@@ -1,7 +1,9 @@
 package com.t1.service;
 
+import java.rmi.AlreadyBoundException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -9,12 +11,15 @@ import org.springframework.stereotype.Service;
 import com.t1.entity.Composite;
 import com.t1.entity.PokemonEntity;
 import com.t1.entity.UserEntity;
+import com.t1.exception.AlreadyExistException;
+import com.t1.exception.NullBlankException;
 import com.t1.repository.PokemonRepository;
 import com.t1.repository.UserRepository;
 import com.t1.requestedto.CreatePokemonRequest;
 import com.t1.requestedto.CreateUserRequest;
 
 import com.t1.requestedto.UpdateUserRequest;
+import com.t1.responsedto.PokemonResponse;
 import com.t1.responsedto.UserResponse;
 
 import com.t1.requestedto.DeleteRequest;
@@ -35,19 +40,32 @@ public class UserService {
 
 		UserEntity user = new UserEntity(createUserRequest);
 		
-		
+		/*
 		if(user.getTeamName() == null || user.getTeamName().isEmpty() || 
 				user.getTrainerName() == null || user.getTrainerName().isEmpty() ||
 				user.getRol() == null || user.getRol().isEmpty() || 
 				user.getUsername() == null || user.getUsername().isEmpty() || 
 				user.getPassword() == null || user.getPassword().isEmpty()) {
-			throw new NullPointerException();
-		}
-		
+			throw new NullBlankException("User can not be null or blank");
+		}*/
+	
 		user.setPkmTeam(new ArrayList<PokemonEntity>());
 
 		if (createUserRequest.getPokemons() != null) {
+			
 			for(CreatePokemonRequest createPkm : createUserRequest.getPokemons()) {
+				/*Optional<PokemonEntity> sas = user.getPkmTeam().stream()
+					.filter(poke -> poke.equals(createPkm.getPkmName())).findFirst();
+				
+				if(sas.isPresent()) {
+					throw new AlreadyExistException("Pokemon already exist!");
+				}*/
+					
+				
+				if(createPkm.getPkmName() == null || createPkm.getPkmName().equals("") ||
+						createPkm.getTypes() == null || createPkm.getTypes().equals("")) {
+					throw new NullBlankException("Pokemon can not be null or blank!");
+				}
 				PokemonEntity pokemon = new PokemonEntity();
 			
 				Composite composite = new Composite(); 
@@ -62,7 +80,7 @@ public class UserService {
 			
 			userRepository.save(user);
 		}
-
+		
 		return user;
 	}
 

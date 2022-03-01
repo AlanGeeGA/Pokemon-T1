@@ -1,22 +1,11 @@
 package com.t1.requestedto;
 
-
-import java.util.List;
-
-import javax.validation.constraints.NotNull;
-
-
-import java.util.List;
-
 import lombok.Getter;
 import lombok.Setter;
 
 @Getter
 @Setter
 public class UpdateUserRequest {
-
-	@NotNull(message = "id is required!")
-	private Long id;
 
 	private String teamName;
 
