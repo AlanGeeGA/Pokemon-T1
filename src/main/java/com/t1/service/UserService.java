@@ -4,22 +4,26 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.t1.entity.Composite;
 import com.t1.entity.PokemonEntity;
 import com.t1.entity.UserEntity;
+import com.t1.exception.EmailException;
+import com.t1.exception.PasswordException;
+import com.t1.exception.TeamNameException;
+import com.t1.exception.TrainerNameException;
+import com.t1.exception.UsernameException;
 import com.t1.repository.PokemonRepository;
 import com.t1.repository.UserRepository;
 import com.t1.requestedto.CreatePokemonRequest;
 import com.t1.requestedto.CreateUserRequest;
 
 import com.t1.requestedto.UpdateUserRequest;
-import com.t1.responsedto.UserResponse;
 
 import com.t1.requestedto.DeleteRequest;
 import com.t1.requestedto.InsertPokemonRequest;
-import com.t1.requestedto.UpdateUserRequest;
 
 
 @Service
@@ -30,11 +34,14 @@ public class UserService {
 	
 	@Autowired
 	PokemonRepository pokemonRepository;
-	
-	public UserEntity createUser(CreateUserRequest createUserRequest) {
 
-		UserEntity user = new UserEntity(createUserRequest);
-		
+	@Autowired
+	private PasswordEncoder passwordEncoder;
+	
+	public UserEntity createUser(CreateUserRequest request) {
+
+		UserEntity user = new UserEntity(request);
+		user.setPassword(passwordEncoder.encode(request.getPassword()));
 		
 		if(user.getTeamName() == null || user.getTeamName().isEmpty() || 
 				user.getTrainerName() == null || user.getTrainerName().isEmpty() ||
@@ -44,14 +51,34 @@ public class UserService {
 			throw new NullPointerException();
 		}
 		
+		if (userRepository.existsByUsernameIgnoreCase(request.getUsername())) {
+			throw new UsernameException();
+		}
+		
+		if (userRepository.existsByTrainerNameIgnoreCase(request.getTrainerName())) {
+			throw new TrainerNameException();
+		}
+		
+		if (userRepository.existsByTeamNameIgnoreCase(request.getTeamName())) {
+			throw new TeamNameException();
+		}
+		
+		if (!user.getUsername().matches("^[A-Za-z0-9+_.-]+@(.+)$")) {
+			throw new EmailException();
+		}
+		
+		if (!user.getPassword().matches("^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[#$@$!%*?&_-])[A-Za-z\\d#$@$!%*?&_-]{8,}$")) {
+			throw new PasswordException();
+		}
+		
 		user.setPkmTeam(new ArrayList<PokemonEntity>());
 
-		if (createUserRequest.getPokemons() != null) {
-			for(CreatePokemonRequest createPkm : createUserRequest.getPokemons()) {
+		if (request.getPokemons() != null) {
+			for(CreatePokemonRequest createPkm : request.getPokemons()) {
 				PokemonEntity pokemon = new PokemonEntity();
 			
 				Composite composite = new Composite(); 
-				composite.setUsername(createUserRequest.getUsername());
+				composite.setUsername(request.getUsername());
 				composite.setPkmName(createPkm.getPkmName());
 				
 				pokemon.setComposite(composite);
@@ -87,7 +114,7 @@ public class UserService {
 	
 	public UserEntity insertPokemon(String username, InsertPokemonRequest insertPokemonRequest) {
 				
-		UserEntity user = userRepository.getByUsername(username); 
+		UserEntity user = userRepository.getByUsername(username);
 
 		if (insertPokemonRequest.getPokemons() != null && !insertPokemonRequest.getPokemons().isEmpty()) {
 			for(CreatePokemonRequest createPkm : insertPokemonRequest.getPokemons()) {
@@ -108,42 +135,49 @@ public class UserService {
 
 		return user;
 	}
-
 	
-	
-	public UserEntity updateUser(UpdateUserRequest updateUserRequest) {
-		UserEntity user = userRepository.getByUsername(updateUserRequest.getUsername());
-				
+	public UserEntity updateUser(UpdateUserRequest request) {
+		UserEntity user = userRepository.getByUsername(request.getUsername());
 		
-		if(updateUserRequest.getTeamName() != null &&
-				!updateUserRequest.getTeamName().isEmpty()) {
-			user.setTeamName(updateUserRequest.getTeamName());
-		} 
+		if (!request.getUsername().matches("^[A-Za-z0-9+_.-]+@(.+)$")) {
+			throw new EmailException();
+		}
 		
-		if (updateUserRequest.getTrainerName() !=null && 
-				! updateUserRequest.getTrainerName().isEmpty()) {
-			user.setTrainerName(updateUserRequest.getTrainerName());
+		if(request.getTeamName() != null &&
+				!request.getTeamName().isEmpty()) {
+			user.setTeamName(request.getTeamName());
+		}
+		
+		if (request.getTrainerName() !=null && 
+				!request.getTrainerName().isEmpty()) {
+			user.setTrainerName(request.getTrainerName());
 		} 
 
-		if(updateUserRequest.getRol() != null &&
-				! updateUserRequest.getRol().isEmpty()) {
-			user.setRol(updateUserRequest.getRol());
+		if(request.getRol() != null &&
+				!request.getRol().isEmpty()) {
+			user.setRol(request.getRol());
 		} 
 		
-		if (updateUserRequest.getUsername() != null &&
-				! updateUserRequest.getUsername().isEmpty()) {
-			user.setUsername(updateUserRequest.getUsername());
+		if (request.getUsername() != null &&
+				!request.getUsername().isEmpty()) {
+			user.setUsername(request.getUsername());
 		} 
 		
-		if (updateUserRequest.getPassword() != null &&
-				! updateUserRequest.getPassword().isEmpty()) {
-			user.setPassword(updateUserRequest.getPassword());
+		String password = user.getPassword();
+		
+		if (request.getPassword().isEmpty() && request.getPassword() != null) {
+			user.setPassword(password);
+		} else {
+			
+			if (!request.getPassword().matches("^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[#$@$!%*?&_-])[A-Za-z\\d#$@$!%*?&_-]{8,}$")) {
+				throw new PasswordException();
+			}
+			
+			user.setPassword(passwordEncoder.encode(request.getPassword()));
 		}
 		
 		user = userRepository.save(user);
 		return user;
 	}
-	
-	
 
 }

@@ -13,11 +13,16 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
+import com.t1.exception.EmailException;
 import com.t1.exception.NotFoudExeception;
+import com.t1.exception.PasswordException;
+import com.t1.exception.TeamNameException;
+import com.t1.exception.TrainerNameException;
+import com.t1.exception.UsernameException;
 import com.t1.responsedto.ResponseDTO;
 
 @ControllerAdvice
-public class ExceptionHandlere  extends ResponseEntityExceptionHandler{
+public class GlobalExceptionHandler extends ResponseEntityExceptionHandler{
 
 	@Override
 	protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex,
@@ -34,8 +39,38 @@ public class ExceptionHandlere  extends ResponseEntityExceptionHandler{
 	
 	@ExceptionHandler(NotFoudExeception.class)
 	public ResponseEntity<ResponseDTO<String>> notFoundException(NotFoudExeception notFound){
-		ResponseDTO<String> response = new ResponseDTO<String>("the element wasnt found", notFound.getMessage());
+		ResponseDTO<String> response = new ResponseDTO<String>("The element wasnt found", notFound.getMessage());
 		return new ResponseEntity<ResponseDTO<String>>(response, HttpStatus.NOT_FOUND);
+	}
+	
+	@ExceptionHandler(EmailException.class)
+	public ResponseEntity<ErrorDetails> emailException(EmailException exception, WebRequest webRequest) {
+		ErrorDetails errorDetalles = new ErrorDetails("Username must be an email", 1000);
+		return new ResponseEntity<>(errorDetalles, HttpStatus.BAD_REQUEST);
+	}
+	
+	@ExceptionHandler(UsernameException.class)
+	public ResponseEntity<ErrorDetails> usernameException(UsernameException exception, WebRequest webRequest) {
+		ErrorDetails errorDetalles = new ErrorDetails("Username already exists", 1002);
+		return new ResponseEntity<>(errorDetalles, HttpStatus.INTERNAL_SERVER_ERROR);
+	}
+	
+	@ExceptionHandler(TeamNameException.class)
+	public ResponseEntity<ErrorDetails> teamNameException(TeamNameException exception, WebRequest webRequest) {
+		ErrorDetails errorDetalles = new ErrorDetails("Team Name already exists", 1003);
+		return new ResponseEntity<>(errorDetalles, HttpStatus.INTERNAL_SERVER_ERROR);
+	}
+	
+	@ExceptionHandler(TrainerNameException.class)
+	public ResponseEntity<ErrorDetails> trainerNameException(TrainerNameException exception, WebRequest webRequest) {
+		ErrorDetails errorDetalles = new ErrorDetails("Trainer Name already exists", 1004);
+		return new ResponseEntity<>(errorDetalles, HttpStatus.INTERNAL_SERVER_ERROR);
+	}
+	
+	@ExceptionHandler(PasswordException.class)
+	public ResponseEntity<ErrorDetails> passwordException(PasswordException exception, WebRequest webRequest) {
+		ErrorDetails errorDetalles = new ErrorDetails("Wrong password format", 1005);
+		return new ResponseEntity<>(errorDetalles, HttpStatus.BAD_REQUEST);
 	}
 	
 	@ExceptionHandler(RuntimeException.class)
