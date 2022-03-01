@@ -144,6 +144,12 @@ public class UserService {
 		return user;
 	}
 	
-	
+	public String deleteUser(String username) {
+		List<UserEntity> user = userRepository.findByUsername(username);
+		
+		userRepository.delete(user.get(0));
+		
+		return "User deleted";
+	}
 
 }

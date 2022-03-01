@@ -112,6 +112,11 @@ public class UserController {
 		return new UserResponse(updateUser);
 	}
 	
+	@DeleteMapping("/deleteUser/{username}")
+	public String deleteUser(@PathVariable String username) {
+		return userService.deleteUser(username);
+	}
+	
 	/*@GetMapping("/getAll")
 	public List<UserResponse> getAllUsers(){
 		List<UserEntity> userList = userService.getAllUsers();

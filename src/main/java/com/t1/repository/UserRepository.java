@@ -21,4 +21,6 @@ public interface UserRepository extends JpaRepository<UserEntity, Composite> {
 	
 	UserEntity getByUsername(String username);
 	
+	
+	
 }
