@@ -88,7 +88,7 @@ public class UserController {
 		return userResponseList;
 	}
 	
-	@DeleteMapping("/delete/{username}")
+	@DeleteMapping("/deletePokemon/{username}")
 	public String deletePokemon(@PathVariable String username, @RequestBody DeleteRequest deleteRequest) {
 		return userService.deletePokemon(deleteRequest);
 	}
