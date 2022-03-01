@@ -46,7 +46,7 @@ public class UserService {
 		
 		user.setPkmTeam(new ArrayList<PokemonEntity>());
 
-		if (createUserRequest.getPokemons() != null) {
+		if (createUserRequest.getPokemons() != null || !createUserRequest.getPokemons().isEmpty()) {
 			for(CreatePokemonRequest createPkm : createUserRequest.getPokemons()) {
 				PokemonEntity pokemon = new PokemonEntity();
 			
@@ -61,6 +61,8 @@ public class UserService {
 			}	
 			
 			userRepository.save(user);
+		}else{
+			throw new IllegalArgumentException();
 		}
 
 		return user;
