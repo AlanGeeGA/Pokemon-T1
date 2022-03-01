@@ -4,11 +4,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.repository.query.parser.Part.IgnoreCaseType;
 import org.springframework.stereotype.Service;
 
 import com.t1.entity.Composite;
 import com.t1.entity.PokemonEntity;
 import com.t1.entity.UserEntity;
+import com.t1.exception.PokemonLimitException;
+import com.t1.exception.RolCantChange;
 import com.t1.repository.PokemonRepository;
 import com.t1.repository.UserRepository;
 import com.t1.requestedto.CreatePokemonRequest;
@@ -58,7 +61,22 @@ public class UserService {
 				pokemon.setType(createPkm.getTypes());
 				
 				user.getPkmTeam().add(pokemon);
+				
+				//no más de 10
+				String userRol= user.getRol();//
+				int numpokemons= user.getPkmTeam().size();//
+				//no más de 10
+				if (userRol.equalsIgnoreCase("Administrator") && numpokemons >10 ) {
+					throw new PokemonLimitException("Admin role can only have a maximum of 10 pokemon");
+					}
+					
+			//
+			
 			}	
+			
+	 
+			
+		 
 			
 			userRepository.save(user);
 		}
@@ -88,12 +106,25 @@ public class UserService {
 	public UserEntity insertPokemon(String username, InsertPokemonRequest insertPokemonRequest) {
 				
 		UserEntity user = userRepository.getByUsername(username); 
+		
+	String userRol= user.getRol();//
+	int numpokemons= user.getPkmTeam().size();//
+
+	
+
 
 		if (insertPokemonRequest.getPokemons() != null && !insertPokemonRequest.getPokemons().isEmpty()) {
 			for(CreatePokemonRequest createPkm : insertPokemonRequest.getPokemons()) {
 				PokemonEntity pokemon = new PokemonEntity();
 				Composite composite = new Composite(); 
 				
+				//no más de 10
+					if (userRol.equalsIgnoreCase("Administrator") && numpokemons >10 ) {
+						throw new PokemonLimitException("Admin role can only have a maximum of 10 pokemon");
+						}
+						
+				//
+					
 				composite.setUsername(user.getUsername());
 				composite.setPkmName(createPkm.getPkmName());
 				
@@ -124,11 +155,17 @@ public class UserService {
 				! updateUserRequest.getTrainerName().isEmpty()) {
 			user.setTrainerName(updateUserRequest.getTrainerName());
 		} 
-
+		
+		if(updateUserRequest.getRol() != null &&
+				! updateUserRequest.getRol().isEmpty()) {
+			throw new RolCantChange("Changing role is not allowed");
+		} 
+		/*
 		if(updateUserRequest.getRol() != null &&
 				! updateUserRequest.getRol().isEmpty()) {
 			user.setRol(updateUserRequest.getRol());
-		} 
+		} */
+
 		
 		if (updateUserRequest.getUsername() != null &&
 				! updateUserRequest.getUsername().isEmpty()) {
@@ -143,6 +180,8 @@ public class UserService {
 		user = userRepository.save(user);
 		return user;
 	}
+	
+	//
 	
 	
 

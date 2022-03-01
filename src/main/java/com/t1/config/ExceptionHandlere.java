@@ -14,6 +14,8 @@ import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
 import com.t1.exception.NotFoudExeception;
+import com.t1.exception.PokemonLimitException;
+import com.t1.exception.RolCantChange;
 import com.t1.responsedto.ResponseDTO;
 
 @ControllerAdvice
@@ -47,6 +49,18 @@ public class ExceptionHandlere  extends ResponseEntityExceptionHandler{
 	@ExceptionHandler(NullPointerException.class)
 	public ResponseEntity<ErrorDetails> nullPoint(NullPointerException e, WebRequest req){
 		ErrorDetails error = new ErrorDetails("Falta un campo por llenar", 1000);
+		return new ResponseEntity<>(error, HttpStatus.INTERNAL_SERVER_ERROR);
+	}
+	
+	@ExceptionHandler(RolCantChange.class)
+	public ResponseEntity<ErrorDetails> nullPoint(RolCantChange e, WebRequest req){
+		ErrorDetails error = new ErrorDetails("Changing role is not allowed", 1200);
+		return new ResponseEntity<>(error, HttpStatus.INTERNAL_SERVER_ERROR);
+	}
+	
+	@ExceptionHandler(PokemonLimitException.class)
+	public ResponseEntity<ErrorDetails> nullPoint(PokemonLimitException e, WebRequest req){
+		ErrorDetails error = new ErrorDetails("Admin role can only have a maximum of 10 pokemon", 1400);
 		return new ResponseEntity<>(error, HttpStatus.INTERNAL_SERVER_ERROR);
 	}
 	

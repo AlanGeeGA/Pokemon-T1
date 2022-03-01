@@ -23,6 +23,7 @@ public class CreateUserRequest {
 	@NotBlank(message = "Password is required!")
 	private String password;
 	
+	@NotBlank(message = "One pokemon is required!")
 	private List<CreatePokemonRequest> pokemons;
 	
 }
