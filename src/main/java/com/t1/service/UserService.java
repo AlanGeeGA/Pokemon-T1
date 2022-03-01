@@ -73,8 +73,13 @@ public class UserService {
 		
 		user.setPkmTeam(new ArrayList<PokemonEntity>());
 
+<<<<<<< HEAD
 		if (request.getPokemons() != null) {
 			for(CreatePokemonRequest createPkm : request.getPokemons()) {
+=======
+		if (createUserRequest.getPokemons() != null || !createUserRequest.getPokemons().isEmpty()) {
+			for(CreatePokemonRequest createPkm : createUserRequest.getPokemons()) {
+>>>>>>> version1-david
 				PokemonEntity pokemon = new PokemonEntity();
 			
 				Composite composite = new Composite(); 
@@ -88,6 +93,8 @@ public class UserService {
 			}	
 			
 			userRepository.save(user);
+		}else{
+			throw new IllegalArgumentException();
 		}
 
 		return user;
@@ -179,5 +186,16 @@ public class UserService {
 		user = userRepository.save(user);
 		return user;
 	}
+<<<<<<< HEAD
+=======
+	
+	public String deleteUser(String username) {
+		List<UserEntity> user = userRepository.findByUsername(username);
+		
+		userRepository.delete(user.get(0));
+		
+		return "User deleted";
+	}
+>>>>>>> version1-david
 
 }

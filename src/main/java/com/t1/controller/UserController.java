@@ -57,7 +57,7 @@ public class UserController {
 	UserService userService;
 	
 	@PostMapping("/create")
-	public UserResponse createUser(@RequestBody CreateUserRequest createUserRequest) {
+	public UserResponse createUser(@Valid @RequestBody CreateUserRequest createUserRequest) {
 		UserEntity user = userService.createUser(createUserRequest);
 		
 		return new UserResponse(user);
@@ -110,6 +110,11 @@ public class UserController {
 	public UserResponse updateDetails(@PathVariable String username, @RequestBody UpdateUserRequest updateUserReq) {
 		UserEntity updateUser = userService.updateUser(updateUserReq);
 		return new UserResponse(updateUser);
+	}
+	
+	@DeleteMapping("/deleteUser/{username}")
+	public String deleteUser(@PathVariable String username) {
+		return userService.deleteUser(username);
 	}
 	
 	/*@GetMapping("/getAll")

@@ -85,5 +85,10 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler{
 		return new ResponseEntity<>(error, HttpStatus.INTERNAL_SERVER_ERROR);
 	}
 	
+	@ExceptionHandler(IllegalArgumentException.class)
+	public ResponseEntity<ErrorDetails> nullPkm(IllegalArgumentException noPkm){
+		ErrorDetails error = new ErrorDetails("At least 1 pokemon must be registered", 1100);
+		return new ResponseEntity<>(error, HttpStatus.INTERNAL_SERVER_ERROR);
+	}
 
 }
