@@ -13,6 +13,7 @@ import com.t1.entity.PokemonEntity;
 import com.t1.entity.UserEntity;
 import com.t1.exception.AlreadyExistException;
 import com.t1.exception.NullBlankException;
+import com.t1.exception.RoleDoesntExist;
 import com.t1.repository.PokemonRepository;
 import com.t1.repository.UserRepository;
 import com.t1.requestedto.CreatePokemonRequest;
@@ -40,14 +41,18 @@ public class UserService {
 
 		UserEntity user = new UserEntity(createUserRequest);
 		
-		/*
+		if(!createUserRequest.getRol().equalsIgnoreCase("Provisional") &&
+			!createUserRequest.getRol().equalsIgnoreCase("Administrator")) {
+			throw new RoleDoesntExist();
+		}
+		
 		if(user.getTeamName() == null || user.getTeamName().isEmpty() || 
 				user.getTrainerName() == null || user.getTrainerName().isEmpty() ||
 				user.getRol() == null || user.getRol().isEmpty() || 
 				user.getUsername() == null || user.getUsername().isEmpty() || 
 				user.getPassword() == null || user.getPassword().isEmpty()) {
 			throw new NullBlankException("User can not be null or blank");
-		}*/
+		}
 	
 		user.setPkmTeam(new ArrayList<PokemonEntity>());
 
@@ -132,6 +137,10 @@ public class UserService {
 	public UserEntity updateUser(UpdateUserRequest updateUserRequest) {
 		UserEntity user = userRepository.getByUsername(updateUserRequest.getUsername());
 				
+		if(!updateUserRequest.getRol().equalsIgnoreCase("Provisional") ||
+				!updateUserRequest.getRol().equalsIgnoreCase("Administrator")) {
+			throw new RoleDoesntExist();
+		}
 		
 		if(updateUserRequest.getTeamName() != null &&
 				!updateUserRequest.getTeamName().isEmpty()) {

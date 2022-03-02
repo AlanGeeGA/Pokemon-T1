@@ -3,6 +3,8 @@ package com.t1.config;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.management.relation.Role;
+
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.InvalidDataAccessApiUsageException;
 import org.springframework.http.HttpHeaders;
@@ -17,6 +19,7 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 
 import com.t1.exception.NotFoudExeception;
 import com.t1.exception.NullBlankException;
+import com.t1.exception.RoleDoesntExist;
 import com.t1.responsedto.ResponseDTO;
 
 @ControllerAdvice
@@ -56,13 +59,19 @@ public class ExceptionHandlere  extends ResponseEntityExceptionHandler{
 	
 	@ExceptionHandler(DataIntegrityViolationException.class)
 	public ResponseEntity<ErrorDetails> nullPoint(DataIntegrityViolationException e, WebRequest req){
-		ErrorDetails error = new ErrorDetails("Pokemon already exist!", 1101);
+		ErrorDetails error = new ErrorDetails("User or Pokemon already exist!", 1101);
 		return new ResponseEntity<>(error, HttpStatus.INTERNAL_SERVER_ERROR);
 	}
 
 	@ExceptionHandler(InvalidDataAccessApiUsageException.class)
 	public ResponseEntity<ErrorDetails> nullPoint(InvalidDataAccessApiUsageException e, WebRequest req){
 		ErrorDetails error = new ErrorDetails("Pokemon already exist!", 1202);
+		return new ResponseEntity<>(error, HttpStatus.INTERNAL_SERVER_ERROR);
+	}
+
+	@ExceptionHandler(RoleDoesntExist.class)
+	public ResponseEntity<ErrorDetails> nullPoint(RoleDoesntExist e, WebRequest req){
+		ErrorDetails error = new ErrorDetails("Role Doesnt Exist!", 1303);
 		return new ResponseEntity<>(error, HttpStatus.INTERNAL_SERVER_ERROR);
 	}
 	
