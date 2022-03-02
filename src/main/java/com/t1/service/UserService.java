@@ -12,6 +12,8 @@ import com.t1.entity.PokemonEntity;
 import com.t1.entity.UserEntity;
 import com.t1.exception.EmailException;
 import com.t1.exception.PasswordException;
+import com.t1.exception.PokemonLimitException;
+import com.t1.exception.RolCantChange;
 import com.t1.exception.TeamNameException;
 import com.t1.exception.TrainerNameException;
 import com.t1.exception.UsernameException;
@@ -85,6 +87,17 @@ public class UserService {
 				pokemon.setType(createPkm.getTypes());
 				
 				user.getPkmTeam().add(pokemon);
+				
+
+				//no más de 10
+				String userRol= user.getRol();//
+				int numpokemons= user.getPkmTeam().size();//
+				//no más de 10
+				if (userRol.equalsIgnoreCase("Administrator") && numpokemons >10 ) {
+					throw new PokemonLimitException("Admin role can only have a maximum of 10 pokemon");
+					}
+					
+			//
 			}	
 			
 			userRepository.save(user);
@@ -118,10 +131,24 @@ public class UserService {
 				
 		UserEntity user = userRepository.getByUsername(username);
 
+		String userRol= user.getRol();//
+		int numpokemons= user.getPkmTeam().size();//
+		
+		
 		if (insertPokemonRequest.getPokemons() != null && !insertPokemonRequest.getPokemons().isEmpty()) {
 			for(CreatePokemonRequest createPkm : insertPokemonRequest.getPokemons()) {
 				PokemonEntity pokemon = new PokemonEntity();
 				Composite composite = new Composite(); 
+				
+				
+
+				//no más de 10
+					if (userRol.equalsIgnoreCase("Administrator") && numpokemons >10 ) {
+						throw new PokemonLimitException("Admin role can only have a maximum of 10 pokemon");
+						}
+						
+				//
+					
 				
 				composite.setUsername(user.getUsername());
 				composite.setPkmName(createPkm.getPkmName());
@@ -157,7 +184,7 @@ public class UserService {
 
 		if(request.getRol() != null &&
 				!request.getRol().isEmpty()) {
-			user.setRol(request.getRol());
+			throw new RolCantChange("Changing role is not allowed");
 		} 
 		
 		if (request.getUsername() != null &&
