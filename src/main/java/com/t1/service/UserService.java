@@ -1,7 +1,9 @@
 package com.t1.service;
 
+import java.rmi.AlreadyBoundException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -10,6 +12,11 @@ import org.springframework.stereotype.Service;
 import com.t1.entity.Composite;
 import com.t1.entity.PokemonEntity;
 import com.t1.entity.UserEntity;
+<<<<<<< HEAD
+import com.t1.exception.AlreadyExistException;
+import com.t1.exception.NullBlankException;
+import com.t1.exception.RoleDoesntExist;
+=======
 import com.t1.exception.EmailException;
 import com.t1.exception.PasswordException;
 import com.t1.exception.PokemonLimitException;
@@ -17,12 +24,18 @@ import com.t1.exception.RolCantChange;
 import com.t1.exception.TeamNameException;
 import com.t1.exception.TrainerNameException;
 import com.t1.exception.UsernameException;
+>>>>>>> origin/version1-alan
 import com.t1.repository.PokemonRepository;
 import com.t1.repository.UserRepository;
 import com.t1.requestedto.CreatePokemonRequest;
 import com.t1.requestedto.CreateUserRequest;
 
 import com.t1.requestedto.UpdateUserRequest;
+<<<<<<< HEAD
+import com.t1.responsedto.PokemonResponse;
+import com.t1.responsedto.UserResponse;
+=======
+>>>>>>> origin/version1-alan
 
 import com.t1.requestedto.DeleteRequest;
 import com.t1.requestedto.InsertPokemonRequest;
@@ -37,6 +50,14 @@ public class UserService {
 	@Autowired
 	PokemonRepository pokemonRepository;
 
+<<<<<<< HEAD
+		UserEntity user = new UserEntity(createUserRequest);
+		
+		if(!createUserRequest.getRol().equalsIgnoreCase("Provisional") &&
+			!createUserRequest.getRol().equalsIgnoreCase("Administrator")) {
+			throw new RoleDoesntExist();
+		}
+=======
 	@Autowired
 	private PasswordEncoder passwordEncoder;
 	
@@ -44,14 +65,35 @@ public class UserService {
 
 		UserEntity user = new UserEntity(request);
 		user.setPassword(passwordEncoder.encode(request.getPassword()));
+>>>>>>> origin/version1-alan
 		
 		if(user.getTeamName() == null || user.getTeamName().isEmpty() || 
 				user.getTrainerName() == null || user.getTrainerName().isEmpty() ||
 				user.getRol() == null || user.getRol().isEmpty() || 
 				user.getUsername() == null || user.getUsername().isEmpty() || 
 				user.getPassword() == null || user.getPassword().isEmpty()) {
-			throw new NullPointerException();
+			throw new NullBlankException("User can not be null or blank");
 		}
+<<<<<<< HEAD
+	
+		user.setPkmTeam(new ArrayList<PokemonEntity>());
+
+		if (createUserRequest.getPokemons() != null) {
+			
+			for(CreatePokemonRequest createPkm : createUserRequest.getPokemons()) {
+				/*Optional<PokemonEntity> sas = user.getPkmTeam().stream()
+					.filter(poke -> poke.equals(createPkm.getPkmName())).findFirst();
+				
+				if(sas.isPresent()) {
+					throw new AlreadyExistException("Pokemon already exist!");
+				}*/
+					
+				
+				if(createPkm.getPkmName() == null || createPkm.getPkmName().equals("") ||
+						createPkm.getTypes() == null || createPkm.getTypes().equals("")) {
+					throw new NullBlankException("Pokemon can not be null or blank!");
+				}
+=======
 		
 		if (userRepository.existsByUsernameIgnoreCase(request.getUsername())) {
 			throw new UsernameException();
@@ -77,6 +119,7 @@ public class UserService {
 
 		if (request.getPokemons() != null || !request.getPokemons().isEmpty()) {
 			for(CreatePokemonRequest createPkm : request.getPokemons()) {
+>>>>>>> origin/version1-alan
 				PokemonEntity pokemon = new PokemonEntity();
 			
 				Composite composite = new Composite(); 
@@ -104,7 +147,7 @@ public class UserService {
 		}else{
 			throw new IllegalArgumentException();
 		}
-
+		
 		return user;
 	}
 
@@ -165,8 +208,19 @@ public class UserService {
 		return user;
 	}
 	
+<<<<<<< HEAD
+	
+	public UserEntity updateUser(UpdateUserRequest updateUserRequest) {
+		UserEntity user = userRepository.getByUsername(updateUserRequest.getUsername());
+				
+		if(!updateUserRequest.getRol().equalsIgnoreCase("Provisional") ||
+				!updateUserRequest.getRol().equalsIgnoreCase("Administrator")) {
+			throw new RoleDoesntExist();
+		}
+=======
 	public UserEntity updateUser(UpdateUserRequest request) {
 		UserEntity user = userRepository.getByUsername(request.getUsername());
+>>>>>>> origin/version1-alan
 		
 		if (!request.getUsername().matches("^[A-Za-z0-9+_.-]+@(.+)$")) {
 			throw new EmailException();
