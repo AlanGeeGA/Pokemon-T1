@@ -2,14 +2,14 @@ package com.t1.exception;
 
 import java.util.NoSuchElementException;
 
-public class NotFoudExeception extends NoSuchElementException{
+public class NotFoundExeception extends NoSuchElementException{
 
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
 
-	public NotFoudExeception(String message) {
+	public NotFoundExeception(String message) {
 		super(message);
 	}
 

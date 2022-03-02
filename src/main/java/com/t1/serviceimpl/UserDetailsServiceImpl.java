@@ -10,7 +10,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import com.t1.entity.UserEntity;
-import com.t1.exception.NotFoudExeception;
+import com.t1.exception.NotFoundExeception;
 import com.t1.repository.UserDetailsRepository;
 
 import io.jsonwebtoken.lang.Objects;
@@ -27,7 +27,7 @@ public class UserDetailsServiceImpl implements UserDetailsService{
 		UserEntity user = userRepository.findByUsername(username);
 		
 		if(user == null) {
-			throw new NotFoudExeception("the user doesnt exists");
+			throw new NotFoundExeception("the user doesnt exists");
 		}
 		
 		return new User(user.getUsername(), user.getPassword(), new ArrayList<>());

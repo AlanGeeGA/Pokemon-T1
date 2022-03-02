@@ -84,7 +84,7 @@ public class UserController {
 	}
 	
 	@PutMapping("/update/{username}")
-	public UserResponse updateDetails(@PathVariable String username, @RequestBody UpdateUserRequest updateUserReq) {
+	public UserResponse updateDetails(@Valid @PathVariable String username, @RequestBody UpdateUserRequest updateUserReq) {
 		UserEntity updateUser = userService.updateUser(updateUserReq);
 		return new UserResponse(updateUser);
 	}
