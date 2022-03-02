@@ -95,7 +95,7 @@ public class UserService {
 				//no más de 10
 				if (userRol.equalsIgnoreCase("Administrator") && numpokemons >10 ) {
 					throw new PokemonLimitException("Admin role can only have a maximum of 10 pokemon");
-					}
+				}
 					
 			//
 			}	
@@ -145,7 +145,7 @@ public class UserService {
 				//no más de 10
 					if (userRol.equalsIgnoreCase("Administrator") && numpokemons >10 ) {
 						throw new PokemonLimitException("Admin role can only have a maximum of 10 pokemon");
-						}
+					}
 						
 				//
 					

@@ -26,7 +26,7 @@ import com.t1.responsedto.UserResponse;
 import com.t1.service.UserService;
 
 @RestController
-@CrossOrigin(origins = "*", methods = {RequestMethod.GET, RequestMethod.POST, RequestMethod.PUT})
+@CrossOrigin(origins = "*", methods = {RequestMethod.GET, RequestMethod.POST, RequestMethod.PUT, RequestMethod.DELETE})
 @RequestMapping("/api/user")
 public class UserController {
 	
