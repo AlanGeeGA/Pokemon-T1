@@ -8,6 +8,7 @@ import org.springframework.dao.InvalidDataAccessApiUsageException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -140,6 +141,12 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler{
 	public ResponseEntity<ErrorDetails> roleDoesntExist(UnauthorizeException e, WebRequest req){
 		ErrorDetails error = new ErrorDetails("Not authorized!", 1015);
 		return new ResponseEntity<>(error, HttpStatus.UNAUTHORIZED);
+	}
+	
+	@ExceptionHandler(AuthenticationException.class)
+	public ResponseEntity<ErrorDetails> wrongUsernamePasswordException(AuthenticationException exception, WebRequest webRequest) {
+		ErrorDetails errorDetalles = new ErrorDetails("Wrong credentials", 1016);
+		return new ResponseEntity<>(errorDetalles, HttpStatus.INTERNAL_SERVER_ERROR);
 	}
 	
 }
