@@ -6,26 +6,39 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.t1.entity.Composite;
 import com.t1.entity.PokemonEntity;
 import com.t1.entity.UserEntity;
+<<<<<<< HEAD
 import com.t1.exception.AlreadyExistException;
 import com.t1.exception.NullBlankException;
 import com.t1.exception.RoleDoesntExist;
+=======
+import com.t1.exception.EmailException;
+import com.t1.exception.PasswordException;
+import com.t1.exception.PokemonLimitException;
+import com.t1.exception.RolCantChange;
+import com.t1.exception.TeamNameException;
+import com.t1.exception.TrainerNameException;
+import com.t1.exception.UsernameException;
+>>>>>>> origin/version1-alan
 import com.t1.repository.PokemonRepository;
 import com.t1.repository.UserRepository;
 import com.t1.requestedto.CreatePokemonRequest;
 import com.t1.requestedto.CreateUserRequest;
 
 import com.t1.requestedto.UpdateUserRequest;
+<<<<<<< HEAD
 import com.t1.responsedto.PokemonResponse;
 import com.t1.responsedto.UserResponse;
+=======
+>>>>>>> origin/version1-alan
 
 import com.t1.requestedto.DeleteRequest;
 import com.t1.requestedto.InsertPokemonRequest;
-import com.t1.requestedto.UpdateUserRequest;
 
 
 @Service
@@ -36,15 +49,23 @@ public class UserService {
 	
 	@Autowired
 	PokemonRepository pokemonRepository;
-	
-	public UserEntity createUser(CreateUserRequest createUserRequest) {
 
+<<<<<<< HEAD
 		UserEntity user = new UserEntity(createUserRequest);
 		
 		if(!createUserRequest.getRol().equalsIgnoreCase("Provisional") &&
 			!createUserRequest.getRol().equalsIgnoreCase("Administrator")) {
 			throw new RoleDoesntExist();
 		}
+=======
+	@Autowired
+	private PasswordEncoder passwordEncoder;
+	
+	public UserEntity createUser(CreateUserRequest request) {
+
+		UserEntity user = new UserEntity(request);
+		user.setPassword(passwordEncoder.encode(request.getPassword()));
+>>>>>>> origin/version1-alan
 		
 		if(user.getTeamName() == null || user.getTeamName().isEmpty() || 
 				user.getTrainerName() == null || user.getTrainerName().isEmpty() ||
@@ -53,6 +74,7 @@ public class UserService {
 				user.getPassword() == null || user.getPassword().isEmpty()) {
 			throw new NullBlankException("User can not be null or blank");
 		}
+<<<<<<< HEAD
 	
 		user.setPkmTeam(new ArrayList<PokemonEntity>());
 
@@ -71,19 +93,59 @@ public class UserService {
 						createPkm.getTypes() == null || createPkm.getTypes().equals("")) {
 					throw new NullBlankException("Pokemon can not be null or blank!");
 				}
+=======
+		
+		if (userRepository.existsByUsernameIgnoreCase(request.getUsername())) {
+			throw new UsernameException();
+		}
+		
+		if (userRepository.existsByTrainerNameIgnoreCase(request.getTrainerName())) {
+			throw new TrainerNameException();
+		}
+		
+		if (userRepository.existsByTeamNameIgnoreCase(request.getTeamName())) {
+			throw new TeamNameException();
+		}
+		
+		if (!user.getUsername().matches("^[A-Za-z0-9+_.-]+@(.+)$")) {
+			throw new EmailException();
+		}
+		
+		if (!user.getPassword().matches("^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[#$@$!%*?&_-])[A-Za-z\\d#$@$!%*?&_-]{8,}$")) {
+			throw new PasswordException();
+		}
+		
+		user.setPkmTeam(new ArrayList<PokemonEntity>());
+
+		if (request.getPokemons() != null || !request.getPokemons().isEmpty()) {
+			for(CreatePokemonRequest createPkm : request.getPokemons()) {
+>>>>>>> origin/version1-alan
 				PokemonEntity pokemon = new PokemonEntity();
 			
 				Composite composite = new Composite(); 
-				composite.setUsername(createUserRequest.getUsername());
+				composite.setUsername(request.getUsername());
 				composite.setPkmName(createPkm.getPkmName());
 				
 				pokemon.setComposite(composite);
 				pokemon.setType(createPkm.getTypes());
 				
 				user.getPkmTeam().add(pokemon);
+				
+
+				//no más de 10
+				String userRol= user.getRol();//
+				int numpokemons= user.getPkmTeam().size();//
+				//no más de 10
+				if (userRol.equalsIgnoreCase("Administrator") && numpokemons >10 ) {
+					throw new PokemonLimitException("Admin role can only have a maximum of 10 pokemon");
+					}
+					
+			//
 			}	
 			
 			userRepository.save(user);
+		}else{
+			throw new IllegalArgumentException();
 		}
 		
 		return user;
@@ -110,12 +172,26 @@ public class UserService {
 	
 	public UserEntity insertPokemon(String username, InsertPokemonRequest insertPokemonRequest) {
 				
-		UserEntity user = userRepository.getByUsername(username); 
+		UserEntity user = userRepository.getByUsername(username);
 
+		String userRol= user.getRol();//
+		int numpokemons= user.getPkmTeam().size();//
+		
+		
 		if (insertPokemonRequest.getPokemons() != null && !insertPokemonRequest.getPokemons().isEmpty()) {
 			for(CreatePokemonRequest createPkm : insertPokemonRequest.getPokemons()) {
 				PokemonEntity pokemon = new PokemonEntity();
 				Composite composite = new Composite(); 
+				
+				
+
+				//no más de 10
+					if (userRol.equalsIgnoreCase("Administrator") && numpokemons >10 ) {
+						throw new PokemonLimitException("Admin role can only have a maximum of 10 pokemon");
+						}
+						
+				//
+					
 				
 				composite.setUsername(user.getUsername());
 				composite.setPkmName(createPkm.getPkmName());
@@ -131,8 +207,8 @@ public class UserService {
 
 		return user;
 	}
-
 	
+<<<<<<< HEAD
 	
 	public UserEntity updateUser(UpdateUserRequest updateUserRequest) {
 		UserEntity user = userRepository.getByUsername(updateUserRequest.getUsername());
@@ -141,36 +217,57 @@ public class UserService {
 				!updateUserRequest.getRol().equalsIgnoreCase("Administrator")) {
 			throw new RoleDoesntExist();
 		}
+=======
+	public UserEntity updateUser(UpdateUserRequest request) {
+		UserEntity user = userRepository.getByUsername(request.getUsername());
+>>>>>>> origin/version1-alan
 		
-		if(updateUserRequest.getTeamName() != null &&
-				!updateUserRequest.getTeamName().isEmpty()) {
-			user.setTeamName(updateUserRequest.getTeamName());
-		} 
+		if (!request.getUsername().matches("^[A-Za-z0-9+_.-]+@(.+)$")) {
+			throw new EmailException();
+		}
 		
-		if (updateUserRequest.getTrainerName() !=null && 
-				! updateUserRequest.getTrainerName().isEmpty()) {
-			user.setTrainerName(updateUserRequest.getTrainerName());
+		if(request.getTeamName() != null &&
+				!request.getTeamName().isEmpty()) {
+			user.setTeamName(request.getTeamName());
+		}
+		
+		if (request.getTrainerName() !=null && 
+				!request.getTrainerName().isEmpty()) {
+			user.setTrainerName(request.getTrainerName());
 		} 
 
-		if(updateUserRequest.getRol() != null &&
-				! updateUserRequest.getRol().isEmpty()) {
-			user.setRol(updateUserRequest.getRol());
+		if(request.getRol() != null &&
+				!request.getRol().isEmpty()) {
+			throw new RolCantChange("Changing role is not allowed");
 		} 
 		
-		if (updateUserRequest.getUsername() != null &&
-				! updateUserRequest.getUsername().isEmpty()) {
-			user.setUsername(updateUserRequest.getUsername());
+		if (request.getUsername() != null &&
+				!request.getUsername().isEmpty()) {
+			user.setUsername(request.getUsername());
 		} 
 		
-		if (updateUserRequest.getPassword() != null &&
-				! updateUserRequest.getPassword().isEmpty()) {
-			user.setPassword(updateUserRequest.getPassword());
+		String password = user.getPassword();
+		
+		if (request.getPassword().isEmpty() && request.getPassword() != null) {
+			user.setPassword(password);
+		} else {
+			
+			if (!request.getPassword().matches("^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[#$@$!%*?&_-])[A-Za-z\\d#$@$!%*?&_-]{8,}$")) {
+				throw new PasswordException();
+			}
+			
+			user.setPassword(passwordEncoder.encode(request.getPassword()));
 		}
 		
 		user = userRepository.save(user);
 		return user;
 	}
 	
-	
-
+	public String deleteUser(String username) {
+		List<UserEntity> user = userRepository.findByUsername(username);
+		
+		userRepository.delete(user.get(0));
+		
+		return "User deleted";
+	}
 }

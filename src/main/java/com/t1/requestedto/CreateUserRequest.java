@@ -4,7 +4,11 @@ package com.t1.requestedto;
 import java.util.List;
 
 import javax.validation.constraints.NotBlank;
+<<<<<<< HEAD
 import javax.validation.constraints.NotNull;
+=======
+import javax.validation.constraints.NotEmpty;
+>>>>>>> origin/version1-alan
 
 import lombok.Getter;
 import lombok.Setter;
@@ -33,6 +37,7 @@ public class CreateUserRequest {
 	@NotBlank(message = "Password is required!")
 	private String password;
 	
+	@NotEmpty(message = "At least 1 pokemon must be registered")
 	private List<CreatePokemonRequest> pokemons;
 	
 }

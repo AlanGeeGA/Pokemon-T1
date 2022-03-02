@@ -1,49 +1,27 @@
 package com.t1.controller;
 
-
-import java.io.IOException;
-import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-import java.util.Optional;
 import org.springframework.web.bind.annotation.CrossOrigin;
-import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.crossstore.ChangeSetPersister.NotFoundException;
-import org.springframework.data.util.ReflectionUtils;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.t1.entity.UserEntity;
-import com.t1.repository.UserRepository;
 import com.t1.requestedto.CreateUserRequest;
 import com.t1.requestedto.UpdateUserRequest;
-import com.t1.requestedto.CreatePokemonRequest;
-import com.t1.requestedto.CreateUserRequest;
 import com.t1.requestedto.DeleteRequest;
 import com.t1.requestedto.InsertPokemonRequest;
-import com.t1.requestedto.UpdateUserRequest;
-import com.t1.responsedto.PokemonResponse;
 import com.t1.responsedto.UserResponse;
 import com.t1.service.UserService;
 
@@ -82,13 +60,13 @@ public class UserController {
 		List<UserResponse> userResponseList = new ArrayList<UserResponse>();
 	
 		userList.stream().forEach(user -> {
-		userResponseList.add(new UserResponse(user));
+			userResponseList.add(new UserResponse(user));
 		});
 	
 		return userResponseList;
 	}
 	
-	@DeleteMapping("/delete/{username}")
+	@DeleteMapping("/deletePokemon/{username}")
 	public String deletePokemon(@PathVariable String username, @RequestBody DeleteRequest deleteRequest) {
 		return userService.deletePokemon(deleteRequest);
 	}
@@ -110,6 +88,11 @@ public class UserController {
 	public UserResponse updateDetails(@Valid @PathVariable String username, @RequestBody UpdateUserRequest updateUserReq) {
 		UserEntity updateUser = userService.updateUser(updateUserReq);
 		return new UserResponse(updateUser);
+	}
+	
+	@DeleteMapping("/deleteUser/{username}")
+	public String deleteUser(@PathVariable String username) {
+		return userService.deleteUser(username);
 	}
 	
 	/*@GetMapping("/getAll")
