@@ -25,7 +25,6 @@ import com.t1.requestedto.InsertPokemonRequest;
 import com.t1.responsedto.UserResponse;
 import com.t1.service.UserService;
 
-
 @RestController
 @CrossOrigin(origins = "*", methods = {RequestMethod.GET, RequestMethod.POST, RequestMethod.PUT})
 @RequestMapping("/api/user")

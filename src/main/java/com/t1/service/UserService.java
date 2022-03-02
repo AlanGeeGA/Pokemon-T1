@@ -99,7 +99,7 @@ public class UserService {
 		return userRepository.findAll();
 	}
 	
-	public List<UserEntity> getByUser(String username){
+	public List<UserEntity> getByUser(String username) {
 		return userRepository.findByUsername(username);
 	}
 	
@@ -130,7 +130,7 @@ public class UserService {
 				pokemon.setType(createPkm.getTypes());
 				
 				user.getPkmTeam().add(pokemon);
-			}	
+			}
 			
 			userRepository.save(user);
 		}
