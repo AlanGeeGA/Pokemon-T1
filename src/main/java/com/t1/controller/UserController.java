@@ -67,39 +67,43 @@ public class UserController {
 		return userResponseList;
 	}
 	
-	@DeleteMapping("/deletePokemon/{username}")
-	public HttpStatus deletePokemon(@PathVariable String username, @RequestBody DeleteRequest deleteRequest) {
+	@PreAuthorize("isAuthenticated()")
+	@DeleteMapping("/deletePokemon")
+	public HttpStatus deletePokemon(@RequestBody DeleteRequest deleteRequest) {
 		UserEntity user = userService.getByUser(deleteRequest.getUsername()).get(0);
 		userService.deletePokemon(user, deleteRequest);
 		return HttpStatus.OK;
 	}
 	
-	@PostMapping("/addPokemon/{username}")
-	public UserResponse addPkm(@PathVariable String username, @RequestBody InsertPokemonRequest insertPokemonRequest) {
-		UserEntity pkm = userService.insertPokemon(username, insertPokemonRequest);
+	@PreAuthorize("isAuthenticated()")  
+	@PostMapping("/addPokemon")
+	public UserResponse addPkm(@RequestBody InsertPokemonRequest insertPokemonRequest) {
+		UserEntity pkm = userService.insertPokemon(getTokenUsername(), insertPokemonRequest);
 		
 		return new UserResponse(pkm);
+	}
+	
+	@PreAuthorize("isAuthenticated()")  
+	@PutMapping("/update")
+	public UserResponse updateDetails(@RequestBody UpdateUserRequest updateUserReq) {
+		UserEntity updateUser = userService.updateUser(updateUserReq);
+		return new UserResponse(updateUser);
+	}
+	
+	@PreAuthorize("isAuthenticated()")  
+	@DeleteMapping("/deleteUser")
+	public String deleteUser() {
+		return userService.deleteUser(getTokenUsername());
+	}
+	
+	private String getTokenUsername() {
+		return SecurityContextHolder.getContext().getAuthentication().getName();
 	}
 	
 	@GetMapping("/")
 	public String getSaludo() {
 		
 		return "Hola estoy funcionando";
-	}
-	
-	@PutMapping("/update/{username}")
-	public UserResponse updateDetails(@Valid @PathVariable String username, @RequestBody UpdateUserRequest updateUserReq) {
-		UserEntity updateUser = userService.updateUser(updateUserReq);
-		return new UserResponse(updateUser);
-	}
-	
-	@DeleteMapping("/deleteUser/{username}")
-	public String deleteUser(@PathVariable String username) {
-		return userService.deleteUser(username);
-	}
-	
-	private String getTokenUsername() {
-		return SecurityContextHolder.getContext().getAuthentication().getName();
 	}
 	
 	/*@GetMapping("/getAll")

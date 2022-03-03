@@ -3,8 +3,6 @@ package com.t1.service;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.transaction.Transactional;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -133,7 +131,7 @@ public class UserService {
 		return userRepository.findByUsername(username);
 	}
 	
-	public String deletePokemon(UserEntity user, DeleteRequest deleteRequest) {
+	public void deletePokemon(UserEntity user, DeleteRequest deleteRequest) {
 		if (user.getRol().equals("Provisional")) {
 			throw new UnauthorizeException();
 		}
@@ -150,8 +148,6 @@ public class UserService {
 		user.getPkmTeam().removeIf(p -> p.getComposite().equals(composite));
 		
 		userRepository.save(user);
-		
-		return "Pokemon Deleted";
 	}
 	
 	public UserEntity insertPokemon(String username, InsertPokemonRequest insertPokemonRequest) {
