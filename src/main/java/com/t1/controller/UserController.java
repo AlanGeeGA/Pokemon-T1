@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -67,9 +68,10 @@ public class UserController {
 	}
 	
 	@DeleteMapping("/deletePokemon/{username}")
-	public String deletePokemon(@PathVariable String username, @RequestBody DeleteRequest deleteRequest) {
+	public HttpStatus deletePokemon(@PathVariable String username, @RequestBody DeleteRequest deleteRequest) {
 		UserEntity user = userService.getByUser(deleteRequest.getUsername()).get(0);
-		return userService.deletePokemon(user, deleteRequest);
+		userService.deletePokemon(user, deleteRequest);
+		return HttpStatus.OK;
 	}
 	
 	@PostMapping("/addPokemon/{username}")
