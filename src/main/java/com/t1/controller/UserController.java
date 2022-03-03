@@ -56,7 +56,7 @@ public class UserController {
 	}
 
 	@GetMapping("/getAllByUser/{username}")
-	public List<UserResponse> getByUser(@PathVariable String username){
+	public List<UserResponse> getByUser(@PathVariable String username) {
 		List<UserEntity> userList = userService.getByUser(username);
 		List<UserResponse> userResponseList = new ArrayList<UserResponse>();
 	
@@ -92,8 +92,9 @@ public class UserController {
 	
 	@PreAuthorize("isAuthenticated()")  
 	@DeleteMapping("/deleteUser")
-	public String deleteUser() {
-		return userService.deleteUser(getTokenUsername());
+	public HttpStatus deleteUser() {
+		userService.deleteUser(getTokenUsername());
+		return HttpStatus.OK;
 	}
 	
 	private String getTokenUsername() {

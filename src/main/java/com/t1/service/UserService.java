@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -235,11 +236,9 @@ public class UserService {
 		return user;
 	}
 	
-	public String deleteUser(String username) {
+	public void deleteUser(String username) {
 		List<UserEntity> user = userRepository.findByUsername(username);
 		
 		userRepository.delete(user.get(0));
-		
-		return "User deleted";
 	}
 }
