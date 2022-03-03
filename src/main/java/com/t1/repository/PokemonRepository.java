@@ -12,6 +12,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
 @Repository
 public interface PokemonRepository extends JpaRepository<PokemonEntity, Composite> {
 
-	boolean existsByComposite(String name);
+	boolean existsByComposite(Composite composite);
+	
+	void deleteById(Composite composite);
 	
 }

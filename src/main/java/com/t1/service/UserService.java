@@ -3,6 +3,8 @@ package com.t1.service;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.transaction.Transactional;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -14,6 +16,7 @@ import com.t1.exception.NullBlankException;
 import com.t1.exception.RoleDoesntExist;
 import com.t1.exception.EmailException;
 import com.t1.exception.PasswordException;
+import com.t1.exception.PkmnDontExitsException;
 import com.t1.exception.PokemonLimitAdminException;
 import com.t1.exception.PokemonLimitProv;
 import com.t1.exception.RolCantChange;
@@ -130,17 +133,23 @@ public class UserService {
 		return userRepository.findByUsername(username);
 	}
 	
-	public String deletePokemon(DeleteRequest deleteRequest) {
-		Composite composite = new Composite(); 
-		
-		if (userRepository.getByUsername(deleteRequest.getUsername()).getRol().equals("Provisional")) {
+	public String deletePokemon(UserEntity user, DeleteRequest deleteRequest) {
+		if (user.getRol().equals("Provisional")) {
 			throw new UnauthorizeException();
 		}
+		
+		Composite composite = new Composite(); 
 		
 		composite.setUsername(deleteRequest.getUsername());
 		composite.setPkmName(deleteRequest.getPkmName());
 		
-		pokemonRepository.deleteById(composite);
+		if (!pokemonRepository.existsByComposite(composite)) {
+			throw new PkmnDontExitsException();
+		}
+		
+		user.getPkmTeam().removeIf(p -> p.getComposite().equals(composite));
+		
+		userRepository.save(user);
 		
 		return "Pokemon Deleted";
 	}

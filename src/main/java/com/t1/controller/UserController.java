@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -67,7 +68,8 @@ public class UserController {
 	
 	@DeleteMapping("/deletePokemon/{username}")
 	public String deletePokemon(@PathVariable String username, @RequestBody DeleteRequest deleteRequest) {
-		return userService.deletePokemon(deleteRequest);
+		UserEntity user = userService.getByUser(deleteRequest.getUsername()).get(0);
+		return userService.deletePokemon(user, deleteRequest);
 	}
 	
 	@PostMapping("/addPokemon/{username}")

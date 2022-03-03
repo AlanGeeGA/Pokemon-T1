@@ -20,6 +20,7 @@ import com.t1.exception.EmailException;
 import com.t1.exception.NotFoundExeception;
 import com.t1.exception.NullBlankException;
 import com.t1.exception.PasswordException;
+import com.t1.exception.PkmnDontExitsException;
 import com.t1.exception.PokemonLimitAdminException;
 import com.t1.exception.PokemonLimitProv;
 import com.t1.exception.RolCantChange;
@@ -146,6 +147,12 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler{
 	@ExceptionHandler(AuthenticationException.class)
 	public ResponseEntity<ErrorDetails> wrongUsernamePasswordException(AuthenticationException exception, WebRequest webRequest) {
 		ErrorDetails errorDetalles = new ErrorDetails("Wrong credentials", 1016);
+		return new ResponseEntity<>(errorDetalles, HttpStatus.INTERNAL_SERVER_ERROR);
+	}
+	
+	@ExceptionHandler(PkmnDontExitsException.class)
+	public ResponseEntity<ErrorDetails> pkmnDoesntExist(PkmnDontExitsException exception, WebRequest webRequest) {
+		ErrorDetails errorDetalles = new ErrorDetails("This pokemon is not in your team!", 1017);
 		return new ResponseEntity<>(errorDetalles, HttpStatus.INTERNAL_SERVER_ERROR);
 	}
 	
