@@ -2,6 +2,7 @@ plugins {
 	id 'org.springframework.boot' version '2.6.3'
 	id 'io.spring.dependency-management' version '1.0.11.RELEASE'
 	id 'java'
+	id "org.sonarqube" version "3.3"
 }
 
 group = 'com.t1'
@@ -30,6 +31,14 @@ dependencies {
 	runtimeOnly 'org.postgresql:postgresql'
 	annotationProcessor 'org.projectlombok:lombok'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+}
+
+sonarqube {
+  properties {
+    property "sonar.projectKey", "AlanGeeGA_Pokemon-T1"
+    property "sonar.organization", "alangeega"
+    property "sonar.host.url", "https://sonarcloud.io"
+  }
 }
 
 
